@@ -169,6 +169,24 @@ const columnLength = 5;
 const header = ["   ", "  b", "-x6", "-x2", "-x3", "-x4", "-x5"];
 const column = [" x1", " x7", " x8", "  f", "  g"];
 
+// const header = [];
+// for (let i = 0; i <= lineLength; i++) {
+//     if (i === 0) {
+//         header.push("   ");
+//     } else if (i === 1) {
+//         header.push("  b");
+//     } else {
+//         header.push(` x${i - 1}`);
+//     }
+// }
+
+// const column = [];
+// for (let i = 0; i < columnLength - 2; i++) {
+//     column.push(` x${lineLength + i}`);
+// }
+// column.push("  f");
+// column.push("  g");
+
 printSystem(system, header, column);
 printLongLine();
 
