@@ -1,12 +1,12 @@
 
 const printSystem = (system, header, column) => {
 
-    console.log(header.join(" "));
+    console.log(header.join("\t"));
 
     for (let i = 0; i < system.length; i++) {
 
-        const line = system[i].join(" ");
-        console.log(column[i] + " " + line);
+        const line = system[i].join("\t");
+        console.log(column[i] + "\t" + line);
     }
 }
 
@@ -166,7 +166,7 @@ let system = [
 const lineLength = 6;
 const columnLength = 5;
 
-const header = ["   ", "  b", "-x6", "-x2", "-x3", "-x4", "-x5"];
+const header = ["   ", "b", "-x6", "-x2", "-x3", "-x4", "-x5"];
 const column = [" x1", " x7", " x8", "  f", "  g"];
 
 // const header = [];
