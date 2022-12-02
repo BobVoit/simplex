@@ -1,4 +1,3 @@
-
 const printSystem = (system, header, column) => {
 
     console.log(header.join("\t"));
@@ -8,6 +7,39 @@ const printSystem = (system, header, column) => {
         const line = system[i].join("\t");
         console.log(column[i] + "\t" + line);
     }
+    if (system[system.length - 1][0] < 0) {
+        console.log("F(x) = " + system[system.length - 2][0] + " " + system[system.length - 1][0] + "M");
+    }
+    else if (system[system.length - 1][0] == 0) {
+        console.log("F(x) = " + system[system.length - 2][0]);
+    }
+    else {
+        console.log("F(x) = " + system[system.length - 2][0] + " + " + system[system.length - 1][0] + "M");
+    }
+
+}
+
+const rounded = (value) => {
+    return Number(value.toFixed(2))
+}
+
+const negativeInFirst = (system, column) => {
+
+    //console.log(header.join(" "));
+
+    for (let i = 0; i < column.length - 2; i++) {
+        if (system[i][0] < 0) {
+            for (let j = 0; j <= system.length; j++)
+                system[i][j] = -1 * system[i][j];
+        }
+    }
+    for (let j = 0; j <= system.length; j++) {
+        for (let i = 0; i < column.length - 2; i++) {
+            system[system.length - 1][j] += system[i][j];
+        }
+        system[system.length - 1][j] *= -1;
+    }
+
 }
 
 const copyMatrix = (matrix) => {
@@ -24,9 +56,9 @@ const copyMatrix = (matrix) => {
 }
 
 const lastLineHaveТegativeElement = (system, lineLength, columnLength) => {
-    const lastLine = system[columnLength - 1]; 
-    const prevLastLine = system[columnLength - 2]; 
-    
+    const lastLine = system[columnLength - 1];
+    const prevLastLine = system[columnLength - 2];
+
     for (let i = 1; i < lineLength; i++) {
         if (lastLine[i] < 0) {
             return true;
@@ -47,22 +79,22 @@ const lastLineHaveТegativeElement = (system, lineLength, columnLength) => {
 }
 
 const prevLastPlusAndPrevLastIsNegative = (system, i, columnLength) => {
-    const lastLine = system[columnLength - 1]; 
-    const prevLastLine = system[columnLength - 2]; 
+    const lastLine = system[columnLength - 1];
+    const prevLastLine = system[columnLength - 2];
 
-    if (lastLine[i] < 0 ) {
+    if (lastLine[i] < 0) {
         return true;
     }
 
     if (lastLine[i] === 0 && prevLastLine[i] < 0) {
-        return true; 
+        return true;
     }
 
     return false;
 }
 
-const isHaveBasis = (system, columnLength, indexColumn) => {
-    
+/*const isHaveBasis = (system, columnLength, indexColumn) => {
+
     let one = 0;
     let zero = 0;
     let another = 0;
@@ -79,7 +111,7 @@ const isHaveBasis = (system, columnLength, indexColumn) => {
     }
 
     return one === 1 && another === 0;
-}
+}*/
 
 const simplex = (system, header, column, lineLength, columnLength) => {
     const lastLine = system[columnLength - 1];
@@ -88,9 +120,9 @@ const simplex = (system, header, column, lineLength, columnLength) => {
     let minValue = 0.1;
     for (let i = 1; i < lineLength; i++) {
         const first = lastLine[i] < minValue;
-        const second = !isHaveBasis(system, columnLength, i)
+        //const second = !isHaveBasis(system, columnLength, i)
         const third = prevLastPlusAndPrevLastIsNegative(system, lineLength, columnLength)
-        if (lastLine[i] < minValue && !isHaveBasis(system, columnLength, i) && prevLastPlusAndPrevLastIsNegative(system, i, columnLength)) {
+        if (lastLine[i] < minValue && /*!isHaveBasis(system, columnLength, i) &&*/ prevLastPlusAndPrevLastIsNegative(system, i, columnLength)) {
             minValue = lastLine[i];
             s = i;
         }
@@ -117,7 +149,7 @@ const simplex = (system, header, column, lineLength, columnLength) => {
 
     for (let i = 0; i < columnLength; i++) {
         for (let j = 0; j < lineLength; j++) {
-            newSystem[i][j] = ((system[i][j] * memory) - (system[i][s] * system[k][j])) / memory;
+            newSystem[i][j] = rounded(((system[i][j] * memory) - (system[i][s] * system[k][j]))) / memory;
         }
     }
 
@@ -125,17 +157,17 @@ const simplex = (system, header, column, lineLength, columnLength) => {
         if (i === s) {
             continue;
         }
-        newSystem[k][i] = system[k][i] / system[k][s];
+        newSystem[k][i] = rounded(system[k][i] / system[k][s]);
     }
 
     for (let i = 0; i < columnLength; i++) {
         if (i === k) {
             continue;
         }
-        newSystem[i][s] = -(system[i][s] / system[k][s]);
+        newSystem[i][s] = -rounded((system[i][s] / system[k][s]));
     }
 
-    newSystem[k][s] = 1 / memory;
+    newSystem[k][s] = rounded(1 / memory);
 
 
     return newSystem;
@@ -145,10 +177,11 @@ const changeCoef = (k, s, header, column) => {
     const elementHeader = header[s + 1];
     const elementColumn = column[k];
     const newElementColumn = elementHeader.replace("-", " ");
-    const newElementHeader = elementColumn.replace(" ", "-"); 
+    const newElementHeader = elementColumn.replace(" ", "-");
 
     header[s + 1] = newElementHeader;
-    column[k] = newElementColumn;
+    column[k] =
+        newElementColumn;
 }
 
 const printLongLine = () => {
@@ -156,37 +189,66 @@ const printLongLine = () => {
 }
 
 let system = [
-    [3, 1, -4, 2, -5, 9], 
-    [6, 0, 1, -3, 4, -5], 
-    [1, 0, 1, -1, 1, -1], 
-    [-6, -2, 14, -9, 11, -14], 
-    [-7, 1 ,-2, 4, -5, 6]
+    [1, -1, -1, 1, 0, 0, 0, 0],
+    [1, -1, 2, 0, 1, 0, 0, 0],
+    [2, -2, -3, 0, 0, 1, 0, 0],
+    [3, -3, 2, 0, 0, 0, 1, 0],
+    [-1, 2, 2, 0, 0, 0, 0, 1],
+    [0, -1, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0]
 ];
 
-const lineLength = 6;
-const columnLength = 5;
+/*let system = [
+    [3, 1, -4, 2, -5, 9],
+    [6, 0, 1, -3, 4, -5],
+    [1, 0, 1, -1, 1, -1],
+    [-6, 2, 14, -9, 11, -14],
+    [0, 0, 0, 0, 0, 0, 0, 0]
+];*/
 
-const header = ["   ", "b", "-x6", "-x2", "-x3", "-x4", "-x5"];
-const column = [" x1", " x7", " x8", "  f", "  g"];
+const lineLength = 8;
+const columnLength = 7;
+
+const header = [];
+for (let i = 0; i <= lineLength; i++) {
+    if (i === 0) {
+        header.push("  ");
+    } else if (i === 1) {
+        header.push("b");
+    } else {
+        header.push(`x${i - 1}`);
+    }
+}
+
+const column = [];
+for (let i = lineLength; i <= columnLength + lineLength-3; i++) {
+    column.push(`x${i}`);
+}
+column.push(" f");
+column.push(" g");
+
+//const header = [" ", " b", "-x1", "-x2", "-x3", "-x4", "-x5", "-x6", "-x7"];
+//const column = [" x3", " x4", " x5", " x6", " x7", " f", " g"];
 
 // const header = [];
 // for (let i = 0; i <= lineLength; i++) {
-//     if (i === 0) {
-//         header.push("   ");
-//     } else if (i === 1) {
-//         header.push("  b");
-//     } else {
-//         header.push(` x${i - 1}`);
-//     }
+// if (i === 0) {
+// header.push(" ");
+// } else if (i === 1) {
+// header.push(" b");
+// } else {
+// header.push(` x${i - 1}`);
+// }
 // }
 
 // const column = [];
 // for (let i = 0; i < columnLength - 2; i++) {
-//     column.push(` x${lineLength + i}`);
+// column.push(` x${lineLength + i}`);
 // }
-// column.push("  f");
-// column.push("  g");
+// column.push(" f");
+// column.push(" g");
 
+negativeInFirst(system, column);
 printSystem(system, header, column);
 printLongLine();
 
