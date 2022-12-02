@@ -55,7 +55,7 @@ const copyMatrix = (matrix) => {
     return newMatrix;
 }
 
-const lastLineHaveТegativeElement = (system, lineLength, columnLength) => {
+const lastLineHaveNegativeElement = (system, lineLength, columnLength) => {
     const lastLine = system[columnLength - 1];
     const prevLastLine = system[columnLength - 2];
 
@@ -119,9 +119,9 @@ const simplex = (system, header, column, lineLength, columnLength) => {
     let s = 1;
     let minValue = 0.1;
     for (let i = 1; i < lineLength; i++) {
-        const first = lastLine[i] < minValue;
+        // const first = lastLine[i] < minValue;
         //const second = !isHaveBasis(system, columnLength, i)
-        const third = prevLastPlusAndPrevLastIsNegative(system, lineLength, columnLength)
+        // const third = prevLastPlusAndPrevLastIsNegative(system, lineLength, columnLength)
         if (lastLine[i] < minValue && /*!isHaveBasis(system, columnLength, i) &&*/ prevLastPlusAndPrevLastIsNegative(system, i, columnLength)) {
             minValue = lastLine[i];
             s = i;
@@ -252,7 +252,7 @@ negativeInFirst(system, column);
 printSystem(system, header, column);
 printLongLine();
 
-while (lastLineHaveТegativeElement(system, lineLength, columnLength)) {
+while (lastLineHaveNegativeElement(system, lineLength, columnLength)) {
     system = simplex(system, header, column, lineLength, columnLength);
     printSystem(system, header, column);
     printLongLine();
