@@ -55,7 +55,7 @@ const copyMatrix = (matrix) => {
     return newMatrix;
 }
 
-const lastLineHaveNegativeElement = (system, lineLength, columnLength) => {
+const lastLineHaveТegativeElement = (system, lineLength, columnLength) => {
     const lastLine = system[columnLength - 1];
     const prevLastLine = system[columnLength - 2];
 
@@ -119,9 +119,9 @@ const simplex = (system, header, column, lineLength, columnLength) => {
     let s = 1;
     let minValue = 0.1;
     for (let i = 1; i < lineLength; i++) {
-        // const first = lastLine[i] < minValue;
+        const first = lastLine[i] < minValue;
         //const second = !isHaveBasis(system, columnLength, i)
-        // const third = prevLastPlusAndPrevLastIsNegative(system, lineLength, columnLength)
+        const third = prevLastPlusAndPrevLastIsNegative(system, lineLength, columnLength)
         if (lastLine[i] < minValue && /*!isHaveBasis(system, columnLength, i) &&*/ prevLastPlusAndPrevLastIsNegative(system, i, columnLength)) {
             minValue = lastLine[i];
             s = i;
@@ -149,7 +149,7 @@ const simplex = (system, header, column, lineLength, columnLength) => {
 
     for (let i = 0; i < columnLength; i++) {
         for (let j = 0; j < lineLength; j++) {
-            newSystem[i][j] = rounded(((system[i][j] * memory) - (system[i][s] * system[k][j]))) / memory;
+            newSystem[i][j] = rounded(((system[i][j] * memory) - (system[i][s] * system[k][j])) / memory);
         }
     }
 
@@ -168,6 +168,13 @@ const simplex = (system, header, column, lineLength, columnLength) => {
     }
 
     newSystem[k][s] = rounded(1 / memory);
+
+    for (let i = 0; i < columnLength; i++) {
+        for (let j = 0; j < lineLength; j++) {
+            if (Math.abs(newSystem[i][j])<=0.01)
+            newSystem[i][j] = 0;
+        }
+    }
 
 
     return newSystem;
@@ -188,26 +195,28 @@ const printLongLine = () => {
     console.log("----------------------------------------------------------------------------------------------------");
 }
 
-let system = [
-    [1, -1, -1, 1, 0, 0, 0, 0],
-    [1, -1, 2, 0, 1, 0, 0, 0],
-    [2, -2, -3, 0, 0, 1, 0, 0],
-    [3, -3, 2, 0, 0, 0, 1, 0],
-    [-1, 2, 2, 0, 0, 0, 0, 1],
-    [0, -1, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0]
-];
-
 /*let system = [
-    [3, 1, -4, 2, -5, 9],
-    [6, 0, 1, -3, 4, -5],
-    [1, 0, 1, -1, 1, -1],
-    [-6, 2, 14, -9, 11, -14],
+    [1, 1, 1, 1, 0, 0, 0, 0],
+    [1, 1, -2, 0, 1, 0, 0, 0],
+    [2, 2, 3, 0, 0, 1, 0, 0],
+    [3, 3, 2, 0, 0, 0, 1, 0],
+    [1, 2, 2, 0, 0, 0, 0, -1],
+    [0, 1, -1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0]
 ];*/
 
-const lineLength = 8;
-const columnLength = 7;
+let system = [
+    [32, 1, 7, 1, 0, 0,0],
+    [42, 2, 5, 0, 1, 0, 0],
+    [62, 3, 4, 0, 0, 1,0],
+    [34, 2, 1, 0, 0, 0,0],
+    [0, -3, -8, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0]
+];
+
+
+const lineLength = 7;
+const columnLength = 6;
 
 const header = [];
 for (let i = 0; i <= lineLength; i++) {
@@ -252,7 +261,7 @@ negativeInFirst(system, column);
 printSystem(system, header, column);
 printLongLine();
 
-while (lastLineHaveNegativeElement(system, lineLength, columnLength)) {
+while (lastLineHaveТegativeElement(system, lineLength, columnLength)) {
     system = simplex(system, header, column, lineLength, columnLength);
     printSystem(system, header, column);
     printLongLine();
